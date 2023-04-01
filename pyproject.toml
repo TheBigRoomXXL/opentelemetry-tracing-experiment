@@ -1,0 +1,26 @@
+[project]
+name = "test_otel_traces"
+description = "An experiment to learn more about the workings of OTEL in python"
+version = "0.1.0"
+authors = [
+    { name = "Sebastien LOVERGNE" }
+]
+dependencies = [
+    "flask",
+    "SQLAlchemy",
+    "flask-smorest",
+    "Flask-SQLAlchemy",
+    "marshmallow-sqlalchemy"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+    "pytest-flask",
+    "black",
+    "ruff"
+]
+
+[tool.setuptools]
+py-modules = []
