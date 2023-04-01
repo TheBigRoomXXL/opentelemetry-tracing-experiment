@@ -1,6 +1,7 @@
 from flask import Flask
 
 from commons import config, api, db
+from commons.opentelemetry import register_opentelemetry
 from ressources.book import blp
 
 
@@ -14,6 +15,8 @@ def create_app(testing: bool = False) -> Flask:
     db.init_app(_app)
     with _app.app_context():
         db.create_all()
+
+    register_opentelemetry(_app, db)
 
     return _app
 

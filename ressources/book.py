@@ -1,8 +1,12 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
 
+from opentelemetry import trace
+
 from commons import db
 from models.book import Book, Bookshema
+
+tracer = trace.get_tracer(__name__)
 
 blp = Blueprint(
     "books", "books", url_prefix="/books", description="Operations on books"
@@ -13,9 +17,9 @@ blp = Blueprint(
 class Books(MethodView):
     @blp.arguments(Bookshema(partial=True), location="query")
     @blp.response(200, Bookshema(many=True))
-    def get(self, filters):
+    def get(self, filters: dict) -> list:
         """List books"""
-        return db.session.execute(db.select(Book).filter_by(**filters))
+        return db.session.scalars(db.select(Book).filter_by(**filters)).all()
 
     @blp.arguments(Bookshema)
     @blp.response(201, Bookshema)
