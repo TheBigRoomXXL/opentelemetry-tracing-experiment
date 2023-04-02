@@ -28,4 +28,4 @@ def register_opentelemetry(app: Flask, db: SQLAlchemy) -> None:
 
     FlaskInstrumentor.instrument_app(app, enable_commenter=True)
     with app.app_context():
-        SQLAlchemyInstrumentor(engine=db.engine)
+        SQLAlchemyInstrumentor().instrument(engine=db.engine, enable_commenter=True)
