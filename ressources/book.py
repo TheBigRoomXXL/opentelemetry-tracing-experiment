@@ -1,16 +1,14 @@
 from flask.views import MethodView
-from flask_smorest import Blueprint
-
-from opentelemetry import trace
-
 from commons import db
+from commons.smorest import Blueprint
+from commons.opentelemetry import traced
 from models.book import Book, Bookshema
-
-tracer = trace.get_tracer(__name__)
 
 blp = Blueprint(
     "books", "books", url_prefix="/books", description="Operations on books"
 )
+blp.ARGUMENTS_PARSER.parse = traced(blp.ARGUMENTS_PARSER.parse)
+blp.response = traced(blp.response)
 
 
 @blp.route("/")
@@ -19,10 +17,13 @@ class Books(MethodView):
     @blp.response(200, Bookshema(many=True))
     def get(self, filters: dict) -> list:
         """List books"""
+        print("G")
         return db.session.scalars(db.select(Book).filter_by(**filters)).all()
 
+    @traced
     @blp.arguments(Bookshema)
     @blp.response(201, Bookshema)
+    @traced
     def post(self, new_book) -> Book:
         """Add a new book"""
         book = Book(**new_book)

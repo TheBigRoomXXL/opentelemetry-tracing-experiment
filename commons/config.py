@@ -9,4 +9,4 @@ OPENAPI_RAPIDOC_PATH = "/"
 OPENAPI_RAPIDOC_URL = "https://cdn.jsdelivr.net/npm/rapidoc@latest/dist/rapidoc-min.js"
 
 # SQLAlchemy
-SQLALCHEMY_DATABASE_URI = "sqlite://"  # In memory db
+SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"  # In memory db

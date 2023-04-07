@@ -1,3 +1,7 @@
+from functools import wraps
+from collections.abc import Callable
+from typing import ParamSpec, TypeVar
+
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -26,3 +30,39 @@ def register_opentelemetry(app: Flask, db: SQLAlchemy) -> None:
     FlaskInstrumentor.instrument_app(app, enable_commenter=True)
     with app.app_context():
         SQLAlchemyInstrumentor().instrument(engine=db.engine, enable_commenter=True)
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def traced(func: Callable[P, R]) -> Callable[P, R]:
+    """Wrap a function with open telemetry tracing"""
+
+    @wraps(func)
+    def with_tracing(*args: P.args, **kwargs: P.kwargs) -> R:
+        tracer = trace.get_tracer(__name__)
+        with tracer.start_as_current_span(func.__name__):
+            print("here")
+            return func(*args, **kwargs)
+
+    return with_tracing
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def super_tracing(func: Callable[P, R]) -> Callable[P, R]:
+    """Wrap a function with open telemetry tracing"""
+    tracer = trace.get_tracer(__name__)
+
+    @wraps(func)
+    def with_tracing(*args: P.args, **kwargs: P.kwargs) -> R:
+        deep_func = func(*args, **kwargs)
+        with tracer.start_as_current_span(func.__name__):
+            print("here")
+            print(deep_func)
+            return deep_func()
+
+    return with_tracing
