@@ -1,14 +1,13 @@
 from flask.views import MethodView
+from flask_smorest import Blueprint
+from sqlalchemy import insert
+
 from commons import db
-from commons.smorest import Blueprint
-from commons.opentelemetry import traced
 from models.book import Book, Bookshema
 
 blp = Blueprint(
     "books", "books", url_prefix="/books", description="Operations on books"
 )
-blp.ARGUMENTS_PARSER.parse = traced(blp.ARGUMENTS_PARSER.parse)
-blp.response = traced(blp.response)
 
 
 @blp.route("/")
@@ -17,19 +16,15 @@ class Books(MethodView):
     @blp.response(200, Bookshema(many=True))
     def get(self, filters: dict) -> list:
         """List books"""
-        print("G")
         return db.session.scalars(db.select(Book).filter_by(**filters)).all()
 
-    @traced
-    @blp.arguments(Bookshema)
-    @blp.response(201, Bookshema)
-    @traced
-    def post(self, new_book) -> Book:
+    @blp.arguments(Bookshema(many=True))
+    @blp.response(201, Bookshema(many=True))
+    def post(self, new_books) -> Book:
         """Add a new book"""
-        book = Book(**new_book)
-        db.session.add(book)
+        books = db.session.scalars(insert(Book).returning(Book), new_books)
         db.session.commit()
-        return book
+        return books
 
 
 @blp.route("/<book_id>")
