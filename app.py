@@ -1,7 +1,7 @@
 from flask import Flask
 
 from commons import config, api, db
-from commons.opentelemetry import register_opentelemetry
+from commons.otel import register_opentelemetry
 from ressources.book import blp
 
 
