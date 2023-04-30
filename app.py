@@ -14,6 +14,7 @@ def create_app(testing: bool = False) -> Flask:
 
     db.init_app(_app)
     with _app.app_context():
+        db.drop_all()
         db.create_all()
 
     register_opentelemetry(_app, db)

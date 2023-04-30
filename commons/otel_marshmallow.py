@@ -71,15 +71,6 @@ class MarshmallowInstrumentor(BaseInstrumentor):
                 span.set_attribute("schema.unknown", _self.unknown)
                 span.set_attribute("schema.ordered", _self.ordered)
 
-                if len(_self.exclude) > 0:
-                    span.set_attribute("schema.exclude", str(list(_self.exclude)))
-                if _self.only is not None:
-                    span.set_attribute("schema.only", str(_self.only))
-                if len(_self.load_only) > 0:
-                    span.set_attribute("schema.load_only", str(list(_self.load_only)))
-                if len(_self.dump_only) > 0:
-                    span.set_attribute("schema.load_only", str(list(_self.dump_only)))
-
                 result = func(_self, *args, **kwargs)
                 return result
 

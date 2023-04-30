@@ -29,7 +29,7 @@ def http_client(app):
 
 @pytest.fixture
 def book(db) -> Book:
-    book = Book(name="Test-Driven Development with Python: Obey the Testing Goat!")
+    book = Book(title="Test-Driven Development with Python: Obey the Testing Goat!")
     db.session.add(book)
     db.session.commit()
     return book
